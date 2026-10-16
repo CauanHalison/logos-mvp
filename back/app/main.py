@@ -71,6 +71,8 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
         if "Value error, " in msg_original:
             mensagem = msg_original.replace("Value error, ", "")
+        elif "value is not a valid email address" in msg_original.lower():
+            mensagem = "Formato de e-mail inválido. Utilize o formato: usuario@dominio.com"
         elif tipo in MENSAGENS_PADRAO:
             template = MENSAGENS_PADRAO[tipo]
             try:

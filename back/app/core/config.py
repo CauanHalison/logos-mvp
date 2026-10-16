@@ -4,15 +4,11 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    PROJECT_NAME: str = "Logos API"
-    API_V1_STR: str = "/api/v1"
-    DEBUG: bool = True
+    PROJECT_NAME: str
+    API_V1_STR: str
+    DEBUG: bool
 
-    BACKEND_CORS_ORIGINS: Union[List[str], str] = [
-        "http://localhost:3000",
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-    ]
+    BACKEND_CORS_ORIGINS: Union[List[str], str]
 
     @field_validator("BACKEND_CORS_ORIGINS", mode="before")
     @classmethod
@@ -21,7 +17,11 @@ class Settings(BaseSettings):
             return [origin.strip() for origin in v.split(",") if origin.strip()]
         return v
 
-    DATABASE_URL: str = "sqlite:///./app.db"
+    DATABASE_URL: str
+
+    JWT_SECRET_KEY: str
+    ALGORITHM: str
+    ACCESS_TOKEN_EXPIRE_MINUTES: int
 
     model_config = SettingsConfigDict(
         env_file=".env",
