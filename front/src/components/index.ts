@@ -7,3 +7,4 @@ export * from './Pagination';
 export * from './IncidentModal';
 export * from './IncidentDetailsModal';
 export * from './ToastContainer';
+export * from './ProtectedRoute';
