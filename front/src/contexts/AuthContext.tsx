@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, type ReactNode } from 'react';
 import { authService, getAuthToken } from '../services';
 import type { User, LoginPayload, RegisterPayload } from '../types';
 import { AuthContext } from './authContextDef';
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(() => !!getAuthToken());
 
