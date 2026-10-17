@@ -1,6 +1,6 @@
 from typing import Optional
 from uuid import UUID
-from sqlalchemy import select, case
+from sqlalchemy import select, case, func
 from sqlalchemy.orm import Session
 from fastapi_pagination import Params
 from fastapi_pagination.ext.sqlalchemy import paginate
@@ -9,7 +9,7 @@ from fastapi import Depends, HTTPException, status
 from app.models.incident import Incident
 from app.models.user import User
 from app.models.enums import IncidentCategory, Criticity, Status
-from app.schemas.incidents import IncidentCreate, IncidentUpdate
+from app.schemas.incidents import IncidentCreate, IncidentUpdate, StatsResponse, StatsCountResponse
 
 
 class IncidentService:
@@ -59,6 +59,41 @@ class IncidentService:
         )
 
         return paginate(db, query, params)
+
+    @staticmethod
+    def get_stats(db: Session) -> StatsResponse:
+        total_incidents = db.query(Incident).count()
+
+        category_stats = db.query(
+            Incident.category,
+            func.count(Incident.id).label("count")
+        ).group_by(Incident.category).all()
+
+        criticity_stats = db.query(
+            Incident.criticity,
+            func.count(Incident.id).label("count")
+        ).group_by(Incident.criticity).all()
+
+        status_stats = db.query(
+            Incident.status,
+            func.count(Incident.id).label("count")
+        ).group_by(Incident.status).all()
+
+        return StatsResponse(
+            total_incidents=total_incidents,
+            category_stats=[
+                StatsCountResponse(stats_value=getattr(category, "value", str(category)), count=count)
+                for category, count in category_stats
+            ],
+            criticity_stats=[
+                StatsCountResponse(stats_value=getattr(criticity, "value", str(criticity)), count=count)
+                for criticity, count in criticity_stats
+            ],
+            status_stats=[
+                StatsCountResponse(stats_value=getattr(status, "value", str(status)), count=count)
+                for status, count in status_stats
+            ],
+        )
 
     @staticmethod
     def create(db: Session, incident_in: IncidentCreate) -> Incident:

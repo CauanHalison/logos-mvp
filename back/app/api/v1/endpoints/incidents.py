@@ -14,6 +14,7 @@ from app.schemas.incidents import (
     INCIDENT_CATEGORY_LABELS,
     CRITICITY_LABELS,
     STATUS_LABELS,
+    StatsResponse,
 )
 from app.services.incident_service import IncidentService
 
@@ -37,6 +38,11 @@ def list_incidents(
         category=category,
         truck_plate=truck_plate,
     )
+
+
+@router.get("/stats", response_model=StatsResponse, summary="Obter estatísticas consolidadas de incidentes")
+def get_incident_stats(db: SessionDep) -> StatsResponse:
+    return IncidentService.get_stats(db=db)
 
 
 @router.get("/options", response_model=IncidentOptionsResponse, summary="Obter opções de categorias, criticidades e status para o frontend")

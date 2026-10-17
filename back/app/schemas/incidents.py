@@ -169,3 +169,17 @@ class IncidentResponse(IncidentBase):
     updated_at: Optional[datetime] = None
 
     model_config = ConfigDict(from_attributes=True)
+
+class StatsCountResponse(BaseModel):
+    stats_value: str
+    count: int
+
+    model_config = ConfigDict(from_attributes=True)
+
+class StatsResponse(BaseModel):
+    total_incidents: int
+    category_stats: list[StatsCountResponse]
+    criticity_stats: list[StatsCountResponse]
+    status_stats: list[StatsCountResponse]
+
+    model_config = ConfigDict(from_attributes=True)
