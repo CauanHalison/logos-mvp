@@ -122,6 +122,9 @@ class IncidentService:
         
         if incident_in.status == Status.EM_INVESTIGACAO and not db_incident.operator_id:
             db_incident.operator_id = current_user.id
+
+        if incident_in.status == Status.ABERTO:
+            db_incident.operator_id = None
             
         update_data = incident_in.model_dump(exclude_unset=True)
         for field, value in update_data.items():
