@@ -9,6 +9,12 @@ export type Criticity = 'baixa' | 'media' | 'alta';
 
 export type Status = 'aberto' | 'fechado' | 'em_investigacao' | 'inconclusivo';
 
+export interface Operator {
+  id: string;
+  name: string;
+  email: string;
+}
+
 export interface Incident {
   id: string;
   truck_plate: string;
@@ -21,6 +27,7 @@ export interface Incident {
   category: IncidentCategory;
   criticity: Criticity;
   status: Status;
+  operator: Operator | null;
   created_at: string;
   updated_at: string | null;
 }
