@@ -6,6 +6,7 @@ import {
   STATUS_LABELS,
 } from '../types';
 import { useAuth } from '../hooks/useAuth';
+import { formatToBrasilia } from '../utils';
 import {
   X,
   Truck,
@@ -204,12 +205,11 @@ export function IncidentDetailsModal({
 
           <div style={styles.timestamps}>
             <span>
-              <Calendar size={13} /> Registrado em:{' '}
-              {new Date(incident.created_at).toLocaleString('pt-BR')}
+              <Calendar size={13} /> Registrado em: {formatToBrasilia(incident.created_at)}
             </span>
             {incident.updated_at && (
               <span>
-                Última atualização: {new Date(incident.updated_at).toLocaleString('pt-BR')}
+                Última atualização: {formatToBrasilia(incident.updated_at)}
               </span>
             )}
           </div>
