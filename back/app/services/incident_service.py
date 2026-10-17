@@ -1,6 +1,6 @@
 from typing import Optional
 from uuid import UUID
-from sqlalchemy import select
+from sqlalchemy import select, case
 from sqlalchemy.orm import Session
 from fastapi_pagination import Params
 from fastapi_pagination.ext.sqlalchemy import paginate
@@ -35,7 +35,26 @@ class IncidentService:
         if truck_plate:
             query = query.where(Incident.truck_plate.ilike(f"%{truck_plate}%"))
 
-        query = query.order_by(Incident.created_at.desc())
+        criticity_order = case(
+            (Incident.criticity == Criticity.ALTA, 1),
+            (Incident.criticity == Criticity.MEDIA, 2),
+            (Incident.criticity == Criticity.BAIXA, 3),
+            else_=4
+        )
+        
+        status_order = case(
+            (Incident.status == Status.ABERTO, 1),
+            (Incident.status == Status.EM_INVESTIGACAO, 2),
+            (Incident.status == Status.INCONCLUSIVO, 3),
+            (Incident.status == Status.FECHADO, 4),
+            else_=5
+        )
+
+        query = query.order_by(
+            criticity_order.asc(), 
+            status_order.asc(),
+            Incident.created_at.desc()
+        )
 
         return paginate(db, query, params)
 
