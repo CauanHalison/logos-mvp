@@ -43,6 +43,43 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       removeAuthToken();
       window.dispatchEvent(new CustomEvent('auth:unauthorized'));
+    } else {
+      let message = 'Não foi possível completar a operação.';
+      let title = 'Erro';
+
+      if (error.response?.status === 403) {
+        title = 'Ação Não Permitida';
+        message = error.response.data?.detail || 'Você não tem permissão para realizar esta ação.';
+      } else if (error.response?.status === 404) {
+        title = 'Não Encontrado';
+        message = error.response.data?.detail || 'O recurso solicitado não foi encontrado.';
+      } else if (error.response?.status === 422) {
+        title = 'Dados Inválidos';
+        const detail = error.response.data?.detail;
+        if (Array.isArray(detail)) {
+          message = detail.map((d: { msg?: string }) => d.msg).filter(Boolean).join('; ') || 'Verifique os dados enviados.';
+        } else if (typeof detail === 'string') {
+          message = detail;
+        }
+      } else if (error.response?.data?.detail) {
+        const detail = error.response.data.detail;
+        message = typeof detail === 'string' ? detail : JSON.stringify(detail);
+      } else if (error.message === 'Network Error') {
+        title = 'Falha de Conexão';
+        message = 'Não foi possível conectar ao servidor. Verifique sua conexão.';
+      } else if (error.message) {
+        message = error.message;
+      }
+
+      window.dispatchEvent(
+        new CustomEvent('app:toast', {
+          detail: {
+            type: 'error',
+            title,
+            message,
+          },
+        })
+      );
     }
     return Promise.reject(error);
   }
