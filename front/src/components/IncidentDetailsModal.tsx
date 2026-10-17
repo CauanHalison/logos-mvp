@@ -239,7 +239,6 @@ export function IncidentDetailsModal({
               className="btn btn-secondary btn-sm"
               onClick={() => {
                 if (canEdit) {
-                  onClose();
                   onEdit(incident);
                 }
               }}

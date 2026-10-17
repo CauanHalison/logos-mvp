@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import type { IncidentFilterParams, IncidentOptions } from '../types';
 import { Search, RotateCcw, Plus } from 'lucide-react';
 
@@ -16,6 +17,24 @@ export function IncidentFilters({
   onReset,
   onNewIncident,
 }: IncidentFiltersProps) {
+  const [localPlate, setLocalPlate] = useState(filters.truck_plate || '');
+  const [prevTruckPlate, setPrevTruckPlate] = useState(filters.truck_plate || '');
+
+  if ((filters.truck_plate || '') !== prevTruckPlate) {
+    setPrevTruckPlate(filters.truck_plate || '');
+    setLocalPlate(filters.truck_plate || '');
+  }
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      if (localPlate !== (filters.truck_plate || '')) {
+        onFilterChange('truck_plate', localPlate);
+      }
+    }, 350);
+
+    return () => clearTimeout(handler);
+  }, [localPlate, filters.truck_plate, onFilterChange]);
+
   const hasActiveFilters = !!(
     filters.truck_plate ||
     filters.status ||
@@ -33,8 +52,8 @@ export function IncidentFilters({
             className="form-input"
             style={{ ...styles.searchInput, textTransform: 'uppercase' }}
             placeholder="Filtrar por placa (ex: ABC1D23)..."
-            value={filters.truck_plate || ''}
-            onChange={(e) => onFilterChange('truck_plate', e.target.value.toUpperCase())}
+            value={localPlate}
+            onChange={(e) => setLocalPlate(e.target.value.toUpperCase())}
           />
         </div>
 

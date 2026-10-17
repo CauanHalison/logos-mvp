@@ -11,7 +11,7 @@ import type {
 import { STATUS_LABELS } from '../types';
 import { useToast } from './useToast';
 
-export const useIncidents = (initialParams?: IncidentFilterParams) => {
+export const useIncidents = (externalFilters?: IncidentFilterParams) => {
   const { success } = useToast();
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [pagination, setPagination] = useState<PaginatedResponse<Incident> | null>(null);
@@ -19,15 +19,16 @@ export const useIncidents = (initialParams?: IncidentFilterParams) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [reloadKey, setReloadKey] = useState<number>(0);
-  const [filters, setFiltersState] = useState<IncidentFilterParams>({
+  const [internalFilters, setInternalFilters] = useState<IncidentFilterParams>({
     page: 1,
     size: 10,
     status: '',
     criticity: '',
     category: '',
     truck_plate: '',
-    ...initialParams,
   });
+
+  const filters = externalFilters ?? internalFilters;
 
   const fetchIncidents = useCallback(async (paramsToUse?: IncidentFilterParams) => {
     try {
@@ -56,6 +57,12 @@ export const useIncidents = (initialParams?: IncidentFilterParams) => {
   useEffect(() => {
     let active = true;
 
+    Promise.resolve().then(() => {
+      if (active) {
+        setLoading(true);
+      }
+    });
+
     incidentService
       .list(filters)
       .then((data) => {
@@ -76,6 +83,14 @@ export const useIncidents = (initialParams?: IncidentFilterParams) => {
         }
       });
 
+    return () => {
+      active = false;
+    };
+  }, [filters, reloadKey]);
+
+  useEffect(() => {
+    let active = true;
+
     incidentService
       .getStats()
       .then((statsData) => {
@@ -88,11 +103,11 @@ export const useIncidents = (initialParams?: IncidentFilterParams) => {
     return () => {
       active = false;
     };
-  }, [filters, reloadKey]);
+  }, [reloadKey]);
 
   const setFilter = (key: keyof IncidentFilterParams, value: unknown) => {
     setLoading(true);
-    setFiltersState((prev) => ({
+    setInternalFilters((prev) => ({
       ...prev,
       [key]: value,
       page: key === 'page' ? (value as number) : 1,
@@ -101,7 +116,7 @@ export const useIncidents = (initialParams?: IncidentFilterParams) => {
 
   const resetFilters = () => {
     setLoading(true);
-    setFiltersState({
+    setInternalFilters({
       page: 1,
       size: 10,
       status: '',
