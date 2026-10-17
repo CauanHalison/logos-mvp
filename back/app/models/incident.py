@@ -1,10 +1,13 @@
 from datetime import datetime, timezone
-from typing import Optional
-from sqlalchemy import CheckConstraint, DateTime, Enum as SQLEnum, Float, String, Text, Uuid, func
-from sqlalchemy.orm import Mapped, mapped_column
+from typing import Optional, TYPE_CHECKING
+from sqlalchemy import CheckConstraint, DateTime, Enum as SQLEnum, Float, String, Text, Uuid, func, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base
 from app.models.enums import IncidentCategory, Criticity, Status
 import uuid
+
+if TYPE_CHECKING:
+    from app.models.user import User
 
 
 class Incident(Base):
@@ -80,3 +83,12 @@ class Incident(Base):
         nullable=False,
         default=Status.ABERTO,
     )
+
+    operator_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        Uuid,
+        ForeignKey("users.id"),
+        nullable=True,
+        default=None
+    )
+
+    operator: Mapped[Optional["User"]] = relationship("User")

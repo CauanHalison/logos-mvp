@@ -4,8 +4,10 @@ from sqlalchemy import select, case
 from sqlalchemy.orm import Session
 from fastapi_pagination import Params
 from fastapi_pagination.ext.sqlalchemy import paginate
+from fastapi import Depends, HTTPException, status
 
 from app.models.incident import Incident
+from app.models.user import User
 from app.models.enums import IncidentCategory, Criticity, Status
 from app.schemas.incidents import IncidentCreate, IncidentUpdate
 
@@ -76,7 +78,16 @@ class IncidentService:
         return db_incident
 
     @staticmethod
-    def update(db: Session, db_incident: Incident, incident_in: IncidentUpdate) -> Incident:
+    def update(db: Session, db_incident: Incident, incident_in: IncidentUpdate, current_user: User) -> Incident:
+        if db_incident.operator_id and db_incident.operator_id != current_user.id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Apenas o operador responsável que iniciou a investigação pode editar este incidente."
+            )
+        
+        if incident_in.status == Status.EM_INVESTIGACAO and not db_incident.operator_id:
+            db_incident.operator_id = current_user.id
+            
         update_data = incident_in.model_dump(exclude_unset=True)
         for field, value in update_data.items():
             setattr(db_incident, field, value)

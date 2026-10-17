@@ -99,7 +99,7 @@ def update_incident(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Incidente com ID {incident_id} não encontrado",
         )
-    return IncidentService.update(db=db, db_incident=incident, incident_in=incident_in)
+    return IncidentService.update(db=db, db_incident=incident, incident_in=incident_in, current_user=current_user)
 
 
 @router.delete("/{incident_id}", status_code=status.HTTP_204_NO_CONTENT, summary="Remover incidente")

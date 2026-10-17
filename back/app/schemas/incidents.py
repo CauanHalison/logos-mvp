@@ -153,10 +153,19 @@ class IncidentUpdate(BaseModel):
             )
         return placa_limpa
 
+class OperatorSummary(BaseModel):
+    id: UUID
+    name: str
+    email: str
+
+    model_config = ConfigDict(from_attributes=True)
+
 
 class IncidentResponse(IncidentBase):
     id: UUID
     status: Status
+    operator_id: Optional[UUID] = None
+    operator: Optional[OperatorSummary] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
 
