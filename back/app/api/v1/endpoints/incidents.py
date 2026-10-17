@@ -120,5 +120,5 @@ def delete_incident(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Incidente com ID {incident_id} não encontrado",
         )
-    IncidentService.delete(db=db, db_incident=incident)
+    IncidentService.delete(db=db, db_incident=incident, current_user=current_user)
     return None

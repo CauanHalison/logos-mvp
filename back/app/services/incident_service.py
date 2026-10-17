@@ -132,6 +132,18 @@ class IncidentService:
         return db_incident
 
     @staticmethod
-    def delete(db: Session, db_incident: Incident) -> None:
+    def delete(db: Session, db_incident: Incident, current_user: User) -> None:
+        if db_incident.operator_id and db_incident.operator_id != current_user.id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Apenas o operador responsável que iniciou a investigação pode deletar este incidente."
+            )
+
+        if db_incident.status == Status.EM_INVESTIGACAO:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Não é possível deletar um incidente que está em investigação."
+            )
+
         db.delete(db_incident)
         db.commit()
