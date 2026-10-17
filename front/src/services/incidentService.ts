@@ -6,6 +6,7 @@ import type {
   IncidentFilterParams,
   IncidentOptions,
   PaginatedResponse,
+  StatsResponse,
 } from '../types';
 
 export const incidentService = {
@@ -46,6 +47,11 @@ export const incidentService = {
 
   async getOptions(): Promise<IncidentOptions> {
     const response = await api.get<IncidentOptions>('/incidents/options');
+    return response.data;
+  },
+
+  async getStats(): Promise<StatsResponse> {
+    const response = await api.get<StatsResponse>('/incidents/stats');
     return response.data;
   },
 };

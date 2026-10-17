@@ -1,5 +1,6 @@
 export * from './Navbar';
 export * from './KpiCards';
+export * from './StatsDistributionPanel';
 export * from './IncidentFilters';
 export * from './IncidentTable';
 export * from './Pagination';

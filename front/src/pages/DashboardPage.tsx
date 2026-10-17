@@ -1,9 +1,10 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useAuth, useIncidents, useIncidentOptions } from '../hooks';
 import type { Incident, Status, IncidentCreatePayload, IncidentUpdatePayload } from '../types';
 import {
   Navbar,
   KpiCards,
+  StatsDistributionPanel,
   IncidentFilters,
   IncidentTable,
   Pagination,
@@ -16,6 +17,7 @@ export function DashboardPage() {
   const {
     incidents,
     pagination,
+    stats,
     loading,
     error,
     filters,
@@ -33,15 +35,6 @@ export function DashboardPage() {
 
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
-
-  const kpiStats = useMemo(() => {
-    const total = pagination?.total || incidents.length;
-    const abertos = incidents.filter((i) => i.status === 'aberto').length;
-    const emInvestigacao = incidents.filter((i) => i.status === 'em_investigacao').length;
-    const criticos = incidents.filter((i) => i.criticity === 'alta').length;
-
-    return { total, abertos, emInvestigacao, criticos };
-  }, [pagination, incidents]);
 
   const handleOpenCreate = () => {
     setIncidentToEdit(null);
@@ -89,7 +82,8 @@ export function DashboardPage() {
       <Navbar user={user} onLogout={logout} />
 
       <main style={styles.main}>
-        <KpiCards stats={kpiStats} />
+        <KpiCards stats={stats} />
+        <StatsDistributionPanel stats={stats} />
 
         <IncidentFilters
           filters={filters}

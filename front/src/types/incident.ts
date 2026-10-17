@@ -1,4 +1,6 @@
 export type IncidentCategory =
+  | 'acidente_veiculo'
+  | 'acidente_vitimas'
   | 'acidente_com_veiculo'
   | 'acidente_com_vitimas'
   | 'clima_atipico'
@@ -78,6 +80,8 @@ export interface IncidentFilterParams {
 }
 
 export const INCIDENT_CATEGORY_LABELS: Record<IncidentCategory, string> = {
+  acidente_veiculo: 'Acidente com veículo',
+  acidente_vitimas: 'Acidente com vítimas',
   acidente_com_veiculo: 'Acidente com veículo',
   acidente_com_vitimas: 'Acidente com vítimas',
   clima_atipico: 'Condição Climática Atípica na Pista',
@@ -97,3 +101,15 @@ export const STATUS_LABELS: Record<Status, string> = {
   em_investigacao: 'Em Investigação',
   inconclusivo: 'Inconclusivo',
 };
+
+export interface StatsCountResponse {
+  stats_value: string;
+  count: number;
+}
+
+export interface StatsResponse {
+  total_incidents: number;
+  category_stats: StatsCountResponse[];
+  criticity_stats: StatsCountResponse[];
+  status_stats: StatsCountResponse[];
+}

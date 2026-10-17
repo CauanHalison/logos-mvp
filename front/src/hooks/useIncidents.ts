@@ -6,11 +6,16 @@ import type {
   IncidentUpdatePayload,
   IncidentFilterParams,
   PaginatedResponse,
+  StatsResponse,
 } from '../types';
+import { STATUS_LABELS } from '../types';
+import { useToast } from './useToast';
 
 export const useIncidents = (initialParams?: IncidentFilterParams) => {
+  const { success } = useToast();
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [pagination, setPagination] = useState<PaginatedResponse<Incident> | null>(null);
+  const [stats, setStats] = useState<StatsResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [reloadKey, setReloadKey] = useState<number>(0);
@@ -39,8 +44,18 @@ export const useIncidents = (initialParams?: IncidentFilterParams) => {
     }
   }, [filters]);
 
+  const fetchStats = useCallback(async () => {
+    try {
+      const statsData = await incidentService.getStats();
+      setStats(statsData);
+    } catch (err) {
+      void err;
+    }
+  }, []);
+
   useEffect(() => {
     let active = true;
+
     incidentService
       .list(filters)
       .then((data) => {
@@ -60,6 +75,15 @@ export const useIncidents = (initialParams?: IncidentFilterParams) => {
           setLoading(false);
         }
       });
+
+    incidentService
+      .getStats()
+      .then((statsData) => {
+        if (active) {
+          setStats(statsData);
+        }
+      })
+      .catch(() => {});
 
     return () => {
       active = false;
@@ -94,6 +118,7 @@ export const useIncidents = (initialParams?: IncidentFilterParams) => {
   const createIncident = async (payload: IncidentCreatePayload): Promise<Incident> => {
     const created = await incidentService.create(payload);
     setReloadKey((prev) => prev + 1);
+    success('Ocorrência cadastrada com sucesso!');
     return created;
   };
 
@@ -103,17 +128,24 @@ export const useIncidents = (initialParams?: IncidentFilterParams) => {
   ): Promise<Incident> => {
     const updated = await incidentService.update(id, payload);
     setReloadKey((prev) => prev + 1);
+    if (payload.status) {
+      success(`Status alterado para ${STATUS_LABELS[payload.status]}!`);
+    } else {
+      success('Ocorrência atualizada com sucesso!');
+    }
     return updated;
   };
 
   const deleteIncident = async (id: string): Promise<void> => {
     await incidentService.delete(id);
     setReloadKey((prev) => prev + 1);
+    success('Ocorrência excluída com sucesso!');
   };
 
   return {
     incidents,
     pagination,
+    stats,
     loading,
     error,
     filters,
@@ -124,6 +156,7 @@ export const useIncidents = (initialParams?: IncidentFilterParams) => {
     createIncident,
     updateIncident,
     deleteIncident,
+    refreshStats: fetchStats,
   };
 };
 
