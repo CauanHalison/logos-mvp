@@ -71,7 +71,7 @@ export function LoginPage() {
             <ShieldAlert size={32} color="#3b82f6" />
           </div>
           <h1 style={styles.title}>LOGOS</h1>
-          <p style={styles.subtitle}>Central de Resposta a Incidentes • AutoU</p>
+          <p style={styles.subtitle}>Central de Resposta a Incidentes</p>
         </div>
 
         <div style={styles.tabContainer}>
