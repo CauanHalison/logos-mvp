@@ -164,7 +164,6 @@ class OperatorSummary(BaseModel):
 class IncidentResponse(IncidentBase):
     id: UUID
     status: Status
-    operator_id: Optional[UUID] = None
     operator: Optional[OperatorSummary] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
