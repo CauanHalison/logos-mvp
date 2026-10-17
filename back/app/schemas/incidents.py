@@ -103,7 +103,35 @@ class IncidentCreate(IncidentBase):
 
 
 class IncidentUpdate(BaseModel):
-    title: Optional[str] = Field(None, min_length=3, max_length=150)
+    truck_plate: Optional[str] = Field(
+        None,
+        min_length=7,
+        max_length=8,
+        description="Placa do caminhão (ex: ABC1D23 ou ABC-1234)"
+    )
+    driver_name: Optional[str] = Field(
+        None,
+        min_length=2,
+        max_length=150,
+        description="Nome do motorista responsável"
+    )
+    latitude: Optional[float] = Field(
+        None,
+        ge=-90.0,
+        le=90.0,
+        description="Latitude das coordenadas GPS"
+    )
+    longitude: Optional[float] = Field(
+        None,
+        ge=-180.0,
+        le=180.0,
+        description="Longitude das coordenadas GPS"
+    )
+    title: Optional[str] = Field(
+        None, 
+        min_length=3, 
+        max_length=150
+    )
     description: Optional[str] = None
     category: Optional[IncidentCategory] = None
     criticity: Optional[Criticity] = None
@@ -111,6 +139,19 @@ class IncidentUpdate(BaseModel):
         None, 
         description="Permite à central mudar o status (ex: Em Investigação, Fechado)"
     )
+
+    @field_validator("truck_plate")
+    @classmethod
+    def validar_e_formatar_placa(cls, v: Optional[str]) -> Optional[str]:
+        if v is None:
+            return None
+        placa_limpa = v.upper().replace("-", "").strip()
+        padrao = r"^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$"
+        if not re.match(padrao, placa_limpa):
+            raise ValueError(
+                "Placa inválida. Utilize o formato Mercosul (ABC1D23) ou Tradicional (ABC-1234)"
+            )
+        return placa_limpa
 
 
 class IncidentResponse(IncidentBase):
