@@ -13,6 +13,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import { formatToBrasilia } from '../utils';
 
 interface IncidentTableProps {
   incidents: Incident[];
@@ -89,7 +90,7 @@ export function IncidentTable({
                 <th style={styles.th}>Motorista</th>
                 <th style={styles.th}>Categoria</th>
                 <th style={styles.th}>Criticidade</th>
-                <th style={styles.th}>Status</th>
+                <th style={styles.thStatus}>Status</th>
                 <th style={styles.th}>Data/Hora</th>
                 <th style={{ ...styles.th, textAlign: 'right' }}>Ações</th>
               </tr>
@@ -136,7 +137,7 @@ export function IncidentTable({
                       </span>
                     </td>
 
-                    <td style={styles.td}>
+                    <td style={styles.tdStatus}>
                       <span className={`badge badge-${inc.status}`}>
                         {STATUS_LABELS[inc.status]}
                       </span>
@@ -149,7 +150,7 @@ export function IncidentTable({
 
                     <td style={styles.td}>
                       <span style={styles.dateText}>
-                        {new Date(inc.created_at).toLocaleDateString('pt-BR', {
+                        {formatToBrasilia(inc.created_at, {
                           day: '2-digit',
                           month: '2-digit',
                           hour: '2-digit',
@@ -197,7 +198,7 @@ export function IncidentTable({
                             ...(canEdit ? {} : styles.disabledActionBtn),
                           }}
                           onClick={() => {
-                            if (canEdit) {
+                            if (canEdit && window.confirm('Deseja realmente excluir esta ocorrência?')) {
                               onDelete(inc.id);
                             }
                           }}
@@ -299,6 +300,16 @@ const styles: Record<string, React.CSSProperties> = {
     textTransform: 'uppercase',
     letterSpacing: '0.05em',
   },
+  thStatus: {
+    padding: '14px 18px',
+    fontSize: '0.75rem',
+    fontWeight: '700',
+    color: '#94a3b8',
+    textTransform: 'uppercase',
+    letterSpacing: '0.05em',
+    width: '180px',
+    minWidth: '180px',
+  },
   tr: {
     borderBottom: '1px solid rgba(30, 41, 59, 0.6)',
     transition: 'background-color 0.15s ease',
@@ -307,6 +318,13 @@ const styles: Record<string, React.CSSProperties> = {
     padding: '14px 18px',
     fontSize: '0.875rem',
     verticalAlign: 'middle',
+  },
+  tdStatus: {
+    padding: '14px 18px',
+    fontSize: '0.875rem',
+    verticalAlign: 'middle',
+    minWidth: '180px',
+    whiteSpace: 'nowrap',
   },
   plateTag: {
     display: 'inline-block',

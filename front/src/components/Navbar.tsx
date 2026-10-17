@@ -16,12 +16,8 @@ export function Navbar({ user, onLogout }: NavbarProps) {
         <div>
           <div style={styles.brandTitleRow}>
             <h1 style={styles.brandTitle}>LOGOS</h1>
-            <span style={styles.liveIndicator}>
-              <span className="pulse-dot" style={{ color: '#10b981' }} />
-              MONITORAMENTO ATIVO
-            </span>
           </div>
-          <p style={styles.brandSub}>Central de Resposta a Incidentes • AutoU</p>
+          <p style={styles.brandSub}>Central de Resposta a Incidentes</p>
         </div>
       </div>
 
