@@ -8,6 +8,7 @@ MVP full-stack focado em ingestão, triagem ágil e visualização de incidentes
 
 * **Front-end em Produção:** [Acessar Aplicação Web](https://logos-mvp-rho.vercel.app/)
 * **Documentação da API (Swagger):** [Acessar Swagger UI](https://logos-mvp.onrender.com/docs)
+* **Vídeo de Demonstração Técnica:** [Assistir Vídeo no Drive](https://drive.google.com/file/d/1xTwTyMXCIdXqM1eaY81UI9L4Bpn2CAAF/view?usp=drive_link)
 * **Repositório GitHub:** [github.com/CauanHalison/logos-mvp](https://github.com/CauanHalison/logos-mvp)
 
 > ⚠️ **Aviso sobre o primeiro acesso (Cold Start):** A API está hospedada na camada gratuita do Render. Caso o serviço esteja inativo há algum tempo, a primeira requisição pode levar cerca de **40 a 60 segundos** para inicializar o contêiner. Após a primeira inicialização, a navegação volta à sua performance instantânea habitual.
