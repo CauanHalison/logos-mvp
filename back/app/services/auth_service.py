@@ -1,6 +1,6 @@
 from typing import Optional
 from uuid import UUID
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.core.security import get_password_hash, verify_password
@@ -15,8 +15,9 @@ class AuthService:
 
     @staticmethod
     def get_by_email(db: Session, email: str) -> Optional[User]:
+        clean_email = email.strip().lower()
         return db.execute(
-            select(User).where(User.email == email)
+            select(User).where(func.lower(User.email) == clean_email)
         ).scalar_one_or_none()
 
     @staticmethod
@@ -24,7 +25,7 @@ class AuthService:
         hashed_password = get_password_hash(user_in.password)
         db_user = User(
             name=user_in.name,
-            email=user_in.email,
+            email=user_in.email.strip().lower(),
             hashed_password=hashed_password,
         )
         db.add(db_user)

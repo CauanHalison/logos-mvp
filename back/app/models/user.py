@@ -20,7 +20,7 @@ class User(Base):
     )
 
     email: Mapped[str] = mapped_column(
-        String(255), 
+        String(255, collation="NOCASE"), 
         unique=True, 
         nullable=False,
         index=True

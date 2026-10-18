@@ -1,7 +1,7 @@
 from datetime import datetime
 from uuid import UUID
 from typing import Optional
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
 
 class Token(BaseModel):
@@ -13,11 +13,21 @@ class LoginRequest(BaseModel):
     email: EmailStr = Field(..., description="E-mail cadastrado do operador")
     password: str = Field(..., description="Senha do operador")
 
+    @field_validator("email")
+    @classmethod
+    def normalize_email(cls, v: str) -> str:
+        return str(v).strip().lower()
+
 
 class UserCreate(BaseModel):
     name: str = Field(..., min_length=2, max_length=150, description="Nome completo do operador")
     email: EmailStr = Field(..., description="E-mail corporativo do operador")
     password: str = Field(..., min_length=6, description="Senha de acesso")
+
+    @field_validator("email")
+    @classmethod
+    def normalize_email(cls, v: str) -> str:
+        return str(v).strip().lower()
 
 
 class UserResponse(BaseModel):
