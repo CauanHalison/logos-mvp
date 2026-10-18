@@ -53,8 +53,8 @@ class IncidentService:
         )
 
         query = query.order_by(
-            criticity_order.asc(), 
             status_order.asc(),
+            criticity_order.asc(), 
             Incident.created_at.desc()
         )
 
